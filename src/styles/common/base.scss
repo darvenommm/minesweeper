@@ -1,0 +1,43 @@
+:root {
+  --first-bg-color: #1c1c27;
+  --second-bg-color: #28293d;
+  --text-color: #ffffff;
+}
+
+body {
+  font-size: 20px;
+  font-family: sans-serif;
+  color: var(--text-color);
+
+  background-color: var(--first-bg-color);
+
+  margin: 0;
+}
+
+button {
+  font-size: inherit;
+  font-family: inherit;
+  color: inherit;
+
+  cursor: pointer;
+}
+
+label {
+  cursor: pointer;
+}
+
+.visually-hidden {
+  position: absolute;
+
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+
+  white-space: nowrap;
+
+  clip-path: inset(100%);
+  clip: rect(0 0 0 0);
+  overflow: hidden;
+}

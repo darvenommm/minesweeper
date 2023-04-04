@@ -1,0 +1,39 @@
+.header {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.header__container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  @media (max-width: 400px) {
+    flex-direction: column;
+  }
+}
+
+.header__title {
+  margin: 0;
+  margin-right: 20px;
+
+  @media (max-width: 400px) {
+    font-size: 30px;
+
+    margin-right: 0;
+  }
+}
+
+.header__link {
+  display: block;
+
+  color: inherit;
+  text-decoration: none;
+  font-size: 35px;
+
+  padding: 10px;
+
+  @media (max-width: 400px) {
+    font-size: 25px;
+  }
+}
