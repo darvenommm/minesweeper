@@ -5,53 +5,69 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Minesweeper</title>
+    <link rel="stylesheet" href="/src/styles/index.scss" />
   </head>
   <body>
-    <header class="rules">
-      <h1 class="rules-title">Minesweeper</h1>
-      <div class="rules-wiki">
-        <a
-          class="rules-link"
-          href="https://en.wikipedia.org/wiki/Minesweeper_(video_game)"
-          target="_blank"
-          rel="noopener noreferrer"
-          >game rules</a
-        >
+    <header class="header">
+      <div class="container header__container">
+        <h1 class="header__title">Minesweeper</h1>
+        <div class="header__wiki">
+          <a
+            class="header__link"
+            href="https://en.wikipedia.org/wiki/Minesweeper_(video_game)"
+            target="_blank"
+            rel="noopener noreferrer"
+            >View the rules</a
+          >
+        </div>
       </div>
     </header>
     <main class="main">
-      <header class="settings">
-        <h2>Game Settings</h2>
-        <form class="settings-form">
-          <label for="settings-width">Width</label>
-          <input
-            class="settings-width"
-            id="settings-width"
-            type="number"
-            name="width"
-            placeholder="Write a width value..."
-          />
-          <label for="settings-height">Height</label>
-          <input
-            class="settings-height"
-            id="settings-height"
-            type="number"
-            name="height"
-            placeholder="Write a height value..."
-          />
-          <label for="settings-bomb">Bomb count</label>
-          <input
-            class="settings-bomb"
-            id="settings-bomb"
-            type="number"
-            name="bomb"
-            placeholder="Write a bomb count value..."
-          />
-          <button class="settings-submit" type="submit">Start new game!</button>
-        </form>
-      </header>
+      <section class="settings">
+        <div class="container">
+          <h2 class="settings__title">Game Settings</h2>
+          <form class="settings__form">
+            <div>
+              <label for="settings__width">Width:</label>
+              <input
+                class="settings__width"
+                id="settings__width"
+                type="number"
+                name="width"
+                placeholder="Write a width value..."
+              />
+            </div>
+            <div>
+              <label for="settings__height">Height:</label>
+              <input
+                class="settings__height"
+                id="settings__height"
+                type="number"
+                name="height"
+                placeholder="Write a height value..."
+              />
+            </div>
+            <div>
+              <label for="settings__bomb">Bomb count:</label>
+              <input
+                class="settings__bomb"
+                id="settings__bomb"
+                type="number"
+                name="bomb"
+                placeholder="Write a bomb count value..."
+              />
+            </div>
+            <button class="settings__submit" type="submit">
+              Start new game!
+            </button>
+          </form>
+        </div>
+      </section>
       <section class="board">
-        <h2 class="visually-hidden">Game board.</h2>
+        <div class="container">
+          <h2 class="visually-hidden">Game board.</h2>
+          <ul class="board__cells"></ul>
+        </div>
       </section>
     </main>
   </body>
