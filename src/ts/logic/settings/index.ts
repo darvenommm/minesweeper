@@ -1,0 +1,1 @@
+export { addCallbackForSettingsFormSubmit } from './main';
