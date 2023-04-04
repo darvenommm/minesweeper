@@ -4,10 +4,55 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
+    <title>Minesweeper</title>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
+    <header class="rules">
+      <h1 class="rules-title">Minesweeper</h1>
+      <div class="rules-wiki">
+        <a
+          class="rules-link"
+          href="https://en.wikipedia.org/wiki/Minesweeper_(video_game)"
+          target="_blank"
+          rel="noopener noreferrer"
+          >game rules</a
+        >
+      </div>
+    </header>
+    <main class="main">
+      <header class="settings">
+        <h2>Game Settings</h2>
+        <form class="settings-form">
+          <label for="settings-width">Width</label>
+          <input
+            class="settings-width"
+            id="settings-width"
+            type="number"
+            name="width"
+            placeholder="Write a width value..."
+          />
+          <label for="settings-height">Height</label>
+          <input
+            class="settings-height"
+            id="settings-height"
+            type="number"
+            name="height"
+            placeholder="Write a height value..."
+          />
+          <label for="settings-bomb">Bomb count</label>
+          <input
+            class="settings-bomb"
+            id="settings-bomb"
+            type="number"
+            name="bomb"
+            placeholder="Write a bomb count value..."
+          />
+          <button class="settings-submit" type="submit">Start new game!</button>
+        </form>
+      </header>
+      <section class="board">
+        <h2 class="visually-hidden">Game board.</h2>
+      </section>
+    </main>
   </body>
 </html>
