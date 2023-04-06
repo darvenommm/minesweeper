@@ -69,7 +69,7 @@ export const rerenderGameCell = (
 };
 
 export const startGame = (game: Game): void => {
-  // this function is started again
+  // if this function is started again
   removeGameBoardClickHandler();
   resetCurrentGame();
 

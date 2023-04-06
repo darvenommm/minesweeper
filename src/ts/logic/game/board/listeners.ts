@@ -16,26 +16,21 @@ export const gameBoardClickHandler = (event: MouseEvent): void => {
   const heightIndex = Number(parentOfTarget.dataset.heightIndex);
 
   const currentGame = getCurrentGame();
-  if (!currentGame) {
+  if (!currentGame || currentGame.isDefeated) {
     return;
   }
 
-  const clickedCell = currentGame.getCell(widthIndex, heightIndex)
-  if (!clickedCell) {
-    return;
-  }
-
-  clickedCell.open();
+  const clickedCell = currentGame.openCell(widthIndex, heightIndex)
 
   if (clickedCell.hasMineWithoutFlag) {
     const newOpenedElementWithBomb = createOpenedCellWithBomb(widthIndex, heightIndex);
     rerenderGameCell(widthIndex, heightIndex, newOpenedElementWithBomb);
-    console.log('Defeat');
+    currentGame.makeGameDefeated();
   } else {
     const newOpenedElement = createOpenedCell(
       widthIndex,
       heightIndex,
-      currentGame.getCellCountOfNearBombs(widthIndex, heightIndex),
+      currentGame.getCellCountOfNearBombs(widthIndex, heightIndex)!,
     );
     rerenderGameCell(widthIndex, heightIndex, newOpenedElement);
   }

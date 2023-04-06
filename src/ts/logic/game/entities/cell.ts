@@ -37,5 +37,5 @@ export class Cell {
 
   public get hasMineWithoutFlag(): boolean {
     return this._hasMine && !this._hasFlag;
-  };
+  }
 }
