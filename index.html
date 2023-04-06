@@ -35,7 +35,9 @@
                 id="settings__width"
                 type="number"
                 name="width"
-                value="0"
+                value="5"
+                min="1"
+                max="40"
                 placeholder="Write a width value..."
               />
             </div>
@@ -46,7 +48,9 @@
                 id="settings__height"
                 type="number"
                 name="height"
-                value="0"
+                value="5"
+                min="1"
+                max="100"
                 placeholder="Write a height value..."
               />
             </div>
@@ -57,7 +61,8 @@
                 id="settings__bomb"
                 type="number"
                 name="bomb"
-                value="0"
+                value="5"
+                min="1"
                 placeholder="Write a bomb count value..."
               />
             </div>
@@ -68,11 +73,26 @@
         </div>
       </section>
       <section class="board">
-        <div class="container">
+        <div class="container board__container">
           <h2 class="visually-hidden">Game board.</h2>
           <ul class="board__cells"></ul>
         </div>
       </section>
     </main>
+
+    <template id="cell-line">
+      <li class="board__line"></li>
+    </template>
+
+    <template id="cell">
+      <div class="board__cell">
+        <button
+          class="board__cell-inner"
+          aria-label="click, if you want to open this cell"
+        >
+          <span class="board__cell-value"></span>
+        </button>
+      </div>
+    </template>
   </body>
 </html>

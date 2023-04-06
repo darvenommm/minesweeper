@@ -1,7 +1,6 @@
-import { addCallbackForSettingsFormSubmit } from './logic/settings';
-
-console.log('Hello world');
+import { addCallbackForSettingsFormSubmit } from './logic/game-settings-form';
+import { createGame } from './logic/game';
 
 addCallbackForSettingsFormSubmit((settings) => {
-  console.log(settings);
+  createGame(settings);
 });
