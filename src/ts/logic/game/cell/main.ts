@@ -28,7 +28,9 @@ export const createOpenedCell = (
 
   const countOfNearBombsContainer = newCell.querySelector<HTMLElement>('.board__cell-value');
   if (countOfNearBombsContainer) {
-    countOfNearBombsContainer.textContent = String(countOfNearBombs);
+    countOfNearBombsContainer.textContent = String(
+      countOfNearBombs === 0 ? '' : countOfNearBombs,
+    );
   }
 
   return newCell;

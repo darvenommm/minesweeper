@@ -1,19 +1,20 @@
 import { Cell } from './cell';
-
-type CellsLine = Cell[];
-type Cells = CellsLine[];
+import type {
+  Cells,
+  CellsLine,
+  CallbackForCellWithBomb,
+  CallbackForCellWithoutBomb,
+} from '../types';
 
 const MIN_WIDTH_VALUE = 2;
 const MIN_HEIGHT_VALUE = 2;
 
 /*
-  requirements:
+  Requirements:
 
   width >= 2
   height >= 2
   bombCount <= (width * height) - 1
-
-  if you want to use all game's methods you need to open one cell with openCell()!
 */
 export class Game {
   private readonly _width: number;
@@ -33,41 +34,6 @@ export class Game {
     this._isWinned = false;
     this._isDefeated = false;
   }
-
-  // public
-  public getCellCountOfNearBombs = (widthIndex: number, heightIndex: number): number | null => {
-    if (!this._cells) {
-      return null;
-    }
-
-    let result = 0;
-
-    for (let i = -1; i <= 1; ++i) {
-      for (let j = -1; j <= 1; ++j) {
-        if (i === 0 && j === 0) {
-          continue;
-        }
-
-        if (this._getCell(widthIndex - j, heightIndex - i)?.hasMine) {
-          ++result;
-        }
-      }
-    }
-
-    return result;
-  };
-
-  public openCell = (widthIndex: number, heightIndex: number): Cell => {
-    if (!this._cells) {
-      this._cells = this._createFilledCells(widthIndex, heightIndex);
-    }
-
-    return this._getCell(widthIndex, heightIndex)!;
-  };
-
-  public makeGameDefeated = (): void => {
-    this._isDefeated = true;
-  };
 
   // getters
   public get width(): number {
@@ -90,18 +56,121 @@ export class Game {
     return this._isWinned;
   }
 
-  // private
-  private _getCell = (widthIndex: number, heightIndex: number): Cell | null => {
+  // public
+  public openCell = (
+    widthIndex: number,
+    heightIndex: number,
+    callbackForCellWithoutBomb: CallbackForCellWithoutBomb,
+    callbackForCellWithBomb: CallbackForCellWithBomb,
+  ): void => {
     if (!this._cells) {
-      return null;
+      this._cells = this._createFilledCells(widthIndex, heightIndex);
     }
 
-    return this._cells[heightIndex]?.[widthIndex] || null;
+    const currentCell = this._getCell(widthIndex, heightIndex)!;
+
+    if (currentCell.hasMineWithoutFlag) {
+      callbackForCellWithBomb(widthIndex, heightIndex);
+      this._makeGameDefeated();
+
+      return;
+    }
+
+    if (currentCell.hasFlag) {
+      return;
+    }
+
+    this._openNearCellsOrCurrent(
+      widthIndex,
+      heightIndex,
+      callbackForCellWithoutBomb,
+    );
+  };
+
+  // private
+  private _openNearCellsOrCurrent = (
+    widthIndex: number,
+    heightIndex: number,
+    callbackForCellWithoutBomb: CallbackForCellWithoutBomb,
+  ): void => {
+    const currentCell = this._getCell(widthIndex, heightIndex);
+    if (!currentCell || currentCell.hasMine || currentCell.hasFlag || currentCell.isOpened) {
+      return;
+    }
+
+    const countOfNearBomb = this._getCountOfNearBomb(widthIndex, heightIndex);
+    currentCell.open();
+    callbackForCellWithoutBomb(widthIndex, heightIndex, countOfNearBomb);
+
+    if (countOfNearBomb > 0) {
+      callbackForCellWithoutBomb(widthIndex, heightIndex, countOfNearBomb);
+      return;
+    }
+
+    this._goThroughNearBombs(
+      widthIndex,
+      heightIndex,
+      (currentWidthIndex, currentHeightIndex): void => {
+        this._openNearCellsOrCurrent(
+          currentWidthIndex,
+          currentHeightIndex,
+          callbackForCellWithoutBomb,
+        );
+      },
+    );
+  };
+
+  private _getCountOfNearBomb = (
+    widthIndex: number,
+    heightIndex: number
+  ): number => {
+    let sum = 0;
+    this._goThroughNearBombs(
+      widthIndex,
+      heightIndex,
+      (currentWidthIndex, currentHeightIndex): void => {
+        const currentCell = this._getCell(currentWidthIndex, currentHeightIndex);
+        sum += currentCell && currentCell.hasMine ? 1 : 0;
+      },
+    );
+
+    return sum;
+  };
+
+  private _goThroughNearBombs = (
+    widthIndex: number,
+    heightIndex: number,
+    callback: (
+      currentWidthIndex: number,
+      currentHeightIndex: number,
+    ) => void
+  ): void => {
+    for (let i = -1; i <= 1; ++i) {
+      for (let j = -1; j <= 1; ++j) {
+        if (i === 0 && j === 0) {
+          continue;
+        }
+
+        callback(widthIndex + j, heightIndex + i);
+      }
+    }
+  };
+
+  private _getCell = (widthIndex: number, heightIndex: number): Cell | void => {
+    if (!this._cells) {
+      return;
+    }
+
+    return this._cells[heightIndex]?.[widthIndex];
+  };
+
+  private _makeGameDefeated = (): void => {
+    this._isDefeated = true;
   };
 
   private _createFilledCells = (
-    firstCellWidthIndex: number,
-    firstCellHeightIndex: number,
+    startCellWidthIndex: number,
+    startCellHeightIndex: number,
   ): Cells => {
     const cells: Cells = Array.from({ length: this._height });
     const countOfCells = this._width * this._height;
@@ -112,7 +181,7 @@ export class Game {
       const cellsLine: CellsLine = Array.from({ length: this._width });
 
       for (let j = 0; j < this._width; ++j) {
-        if (j === firstCellWidthIndex && i === firstCellHeightIndex) {
+        if (j === startCellWidthIndex && i === startCellHeightIndex) {
           cellsLine[j] = new Cell(false);
           continue;
         }

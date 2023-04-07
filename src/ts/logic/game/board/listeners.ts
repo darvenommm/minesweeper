@@ -1,6 +1,30 @@
 import { getCurrentGame, rerenderGameCell } from './main';
 import { createOpenedCell, createOpenedCellWithBomb } from '../cell/main';
 
+const callbackForCellWithoutBomb = (
+  widthIndex: number,
+  heightIndex: number,
+  countOfNearBombs: number,
+): void => {
+  const newOpenedElement = createOpenedCell(
+    widthIndex,
+    heightIndex,
+    countOfNearBombs,
+  );
+  rerenderGameCell(widthIndex, heightIndex, newOpenedElement);
+};
+
+const callbackForCellWithBomb = (
+  widthIndex: number,
+  heightIndex: number,
+): void => {
+  const newOpenedElementWithBomb = createOpenedCellWithBomb(
+    widthIndex,
+    heightIndex,
+  );
+  rerenderGameCell(widthIndex, heightIndex, newOpenedElementWithBomb);
+};
+
 export const gameBoardClickHandler = (event: MouseEvent): void => {
   const target = event.target;
   if (!(target instanceof HTMLElement)) {
@@ -12,26 +36,15 @@ export const gameBoardClickHandler = (event: MouseEvent): void => {
     return;
   }
 
-  const widthIndex = Number(parentOfTarget.dataset.widthIndex);
-  const heightIndex = Number(parentOfTarget.dataset.heightIndex);
-
   const currentGame = getCurrentGame();
   if (!currentGame || currentGame.isDefeated) {
     return;
   }
 
-  const clickedCell = currentGame.openCell(widthIndex, heightIndex)
-
-  if (clickedCell.hasMineWithoutFlag) {
-    const newOpenedElementWithBomb = createOpenedCellWithBomb(widthIndex, heightIndex);
-    rerenderGameCell(widthIndex, heightIndex, newOpenedElementWithBomb);
-    currentGame.makeGameDefeated();
-  } else {
-    const newOpenedElement = createOpenedCell(
-      widthIndex,
-      heightIndex,
-      currentGame.getCellCountOfNearBombs(widthIndex, heightIndex)!,
-    );
-    rerenderGameCell(widthIndex, heightIndex, newOpenedElement);
-  }
+  currentGame.openCell(
+    Number(parentOfTarget.dataset.widthIndex),
+    Number(parentOfTarget.dataset.heightIndex),
+    callbackForCellWithoutBomb,
+    callbackForCellWithBomb,
+  );
 };

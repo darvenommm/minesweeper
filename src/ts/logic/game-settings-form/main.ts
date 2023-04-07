@@ -1,5 +1,5 @@
 import type { IGameSettings } from '../../types/settings';
-import type { SubmitCallback } from './types/submit-callback';
+import type { SubmitCallback } from './types';
 
 const DEFAULT_WIDTH_VALUE = 5;
 const DEFAULT_HEIGHT_VALUE = 5;
