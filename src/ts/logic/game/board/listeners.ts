@@ -1,5 +1,8 @@
 import { getCurrentGame, rerenderGameCell } from './main';
 import { createOpenedCell, createOpenedCellWithBomb } from '../cell/main';
+import { openModal } from '../../modal';
+
+const createNewGameButton = document.querySelector<HTMLButtonElement>('.settings__submit');
 
 const callbackForCellWithoutBomb = (
   widthIndex: number,
@@ -25,6 +28,14 @@ const callbackForCellWithBomb = (
   rerenderGameCell(widthIndex, heightIndex, newOpenedElementWithBomb);
 };
 
+const callbackForLostGame = (): void => {
+  openModal('You lost! Create the new game', createNewGameButton);
+};
+
+const callbackForWinGame = (): void => {
+  openModal('You win! Great job', createNewGameButton);
+};
+
 export const gameBoardClickHandler = (event: MouseEvent): void => {
   const target = event.target;
   if (!(target instanceof HTMLElement)) {
@@ -37,7 +48,7 @@ export const gameBoardClickHandler = (event: MouseEvent): void => {
   }
 
   const currentGame = getCurrentGame();
-  if (!currentGame || currentGame.isDefeated) {
+  if (!currentGame) {
     return;
   }
 
@@ -46,5 +57,7 @@ export const gameBoardClickHandler = (event: MouseEvent): void => {
     Number(parentOfTarget.dataset.heightIndex),
     callbackForCellWithoutBomb,
     callbackForCellWithBomb,
+    callbackForWinGame,
+    callbackForLostGame,
   );
 };

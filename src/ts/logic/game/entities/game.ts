@@ -20,6 +20,7 @@ export class Game {
   private readonly _width: number;
   private readonly _height: number;
   private readonly _bombCount: number;
+  private _countOfOpenedCell: number;
   private _cells: Cells | null;
   private _isWinned: boolean;
   private _isDefeated: boolean;
@@ -30,6 +31,7 @@ export class Game {
     const multi = width * height;
     this._bombCount = (bombCount < multi) ? bombCount : (multi - 1);
 
+    this._countOfOpenedCell = 0;
     this._cells = null;
     this._isWinned = false;
     this._isDefeated = false;
@@ -62,7 +64,13 @@ export class Game {
     heightIndex: number,
     callbackForCellWithoutBomb: CallbackForCellWithoutBomb,
     callbackForCellWithBomb: CallbackForCellWithBomb,
+    callbackForWinGame: () => void,
+    callbackForLostGame: () => void,
   ): void => {
+    if (this._isDefeated || this._isWinned) {
+      return;
+    }
+
     if (!this._cells) {
       this._cells = this._createFilledCells(widthIndex, heightIndex);
     }
@@ -72,22 +80,45 @@ export class Game {
     if (currentCell.hasMineWithoutFlag) {
       callbackForCellWithBomb(widthIndex, heightIndex);
       this._makeGameDefeated();
-
-      return;
+    } else if (!currentCell.hasFlag) {
+      this._openNearCellsOrCurrent(
+        widthIndex,
+        heightIndex,
+        callbackForCellWithoutBomb,
+      );
+      this._checkIsWinned();
     }
 
-    if (currentCell.hasFlag) {
-      return;
+    if (this._isDefeated || this._isWinned) {
+      this._openAllCell(callbackForCellWithoutBomb, callbackForCellWithBomb);
     }
 
-    this._openNearCellsOrCurrent(
-      widthIndex,
-      heightIndex,
-      callbackForCellWithoutBomb,
-    );
+    if (this._isDefeated) {
+      callbackForLostGame();
+    } else if (this._isWinned) {
+      callbackForWinGame();
+    }
   };
 
   // private
+  private _openAllCell = (
+    callbackForCellWithoutBomb: CallbackForCellWithoutBomb,
+    callbackForCellWithBomb: CallbackForCellWithBomb,
+  ): void => {
+    for (let i = 0; i < this._height; ++i) {
+      for (let j = 0; j < this._width; ++j) {
+        const currentCell = this._getCell(j, i)!;
+
+        if (currentCell.hasMine) {
+          callbackForCellWithBomb(j, i);
+        } else {
+          const countOfNearBombs = this._getCountOfNearBomb(j, i);
+          callbackForCellWithoutBomb(j, i, countOfNearBombs);
+        }
+      }
+    }
+  };
+
   private _openNearCellsOrCurrent = (
     widthIndex: number,
     heightIndex: number,
@@ -100,6 +131,7 @@ export class Game {
 
     const countOfNearBomb = this._getCountOfNearBomb(widthIndex, heightIndex);
     currentCell.open();
+    this._countOfOpenedCell++;
     callbackForCellWithoutBomb(widthIndex, heightIndex, countOfNearBomb);
 
     if (countOfNearBomb > 0) {
@@ -166,6 +198,12 @@ export class Game {
 
   private _makeGameDefeated = (): void => {
     this._isDefeated = true;
+  };
+
+  private _checkIsWinned = (): void => {
+    if (this._countOfOpenedCell === (this._width * this._height) - this._bombCount) {
+      this._isWinned = true;
+    }
   };
 
   private _createFilledCells = (
